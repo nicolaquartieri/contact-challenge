@@ -1,0 +1,22 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- App Name -->
+    <string name="app_name">Contact App</string>
+
+    <!-- Error Handling Msj -->
+    <string name="cancel" tools:ignore="UnusedResources">Cancel</string>
+    <string name="ok">OK</string>
+    <string name="ops">Oops! Something went wrong</string>
+    <string name="please_try_again" tools:ignore="UnusedResources">Please try again later</string>
+    <string name="generic_error">There was a problem. Try again</string>
+    <string name="no_connection">You are not connected to the Internet. Try again later.</string>
+    <string name="try_again">Please try again</string>
+    <string name="sorry">We\'re sorry!</string>
+
+    <!-- Stuff -->
+    <string name="title_detail">Detail</string>
+    <string name="no_description">No Description</string>
+    <string name="bday_string">Fecha de nacimiento: </string>
+    <string name="home">Home :</string>
+    <string name="work">Work :</string>
+    <string name="title_contacts">Contacts</string>
+</resources>

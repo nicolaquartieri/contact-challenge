@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <color name="c9" tools:ignore="UnusedResources">#CCCCCC</color>
+    <color name="c1" tools:ignore="UnusedResources">#08b4c5</color>
+    <color name="c1_1" tools:ignore="UnusedResources">#069198</color>
+    <color name="c10" tools:ignore="UnusedResources">#FFFFFF</color>
+    <color name="c1_2" tools:ignore="UnusedResources">#8016b0c5</color>
+    <color name="c8" tools:ignore="UnusedResources">#FF0000</color>
+    <color name="c6" tools:ignore="UnusedResources">#555555</color>
+    <color name="c6_1" tools:ignore="UnusedResources">#e0e0e0</color>
+    <color name="c6_2" tools:ignore="UnusedResources">#f9f9f9</color>
+    <color name="c7" tools:ignore="UnusedResources">#292929</color>
+    <color name="c11" tools:ignore="UnusedResources">#000000</color>
+    <color name="c11_50">#80000000</color>
+    <color name="c11_0">#00000000</color>
+    <color name="c11_1" tools:ignore="UnusedResources">#80000000</color>
+    <color name="c11_80">#CC000000</color>
+    <color name="c11_12" tools:ignore="UnusedResources">#30000000</color>
+    <color name="c12" tools:ignore="UnusedResources">#E5F7F9</color>
+    <color name="c13" tools:ignore="UnusedResources">#EEEEEE</color>
+    <color name="c14" tools:ignore="UnusedResources">#ff4e4e</color>
+    <color name="c15" tools:ignore="UnusedResources">#b22727</color>
+
+    <!-- Material design color gradients. -->
+    <color name="black" tools:ignore="UnusedResources">#000000</color>
+    <color name="black_87" tools:ignore="UnusedResources">#DD000000</color>
+    <color name="black_72" tools:ignore="UnusedResources">#BA000000</color>
+    <color name="black_54" tools:ignore="UnusedResources">#89000000</color>
+    <color name="black_32" tools:ignore="UnusedResources">#51000000</color>
+    <color name="black_26" tools:ignore="UnusedResources">#42000000</color>
+    <color name="black_12" tools:ignore="UnusedResources">#1E000000</color>
+    <color name="white" tools:ignore="UnusedResources">#FFFFFF</color>
+    <color name="white_87" tools:ignore="UnusedResources">#DDFFFFFF</color>
+    <color name="white_54" tools:ignore="UnusedResources">#89FFFFFF</color>
+    <color name="white_26" tools:ignore="UnusedResources">#42FFFFFF</color>
+    <color name="white_12" tools:ignore="UnusedResources">#1EFFFFFF</color>
+
+    <color name="grey_32" tools:ignore="UnusedResources">#51EEEEEE</color>
+
+    <!-- Action bar background color. -->
+    <color name="action_bar_background" tools:ignore="UnusedResources">#f9f9f9</color>
+</resources>

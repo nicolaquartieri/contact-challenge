@@ -1,13 +1,17 @@
-# flickr-app
+# contact-challenge
 
-Simple App for search photos based on user preference.
-
-![Image of flickr-app](https://github.com/nicolaquartieri/flickr-app/blob/master/device.png)
+Simple App for list contacts information form a REST service.
 
 ### Feature
 
-  - Show latest uploaded photos to Flickr when the app start.
-  - Search based on user preference.
+  - Show latest uploaded contacts.
   - Show detail description of each of the selected Photos.
-  - Swipe to refresh the user search or the latest uploaded photos to Flickr when the app start.
+  - Show full screen picture detail.
   - Espresso UI test added.
+
+### Libs
+
+  - Retrofit2.
+  - Glide.
+  - Espresso.
+  - Mockito.

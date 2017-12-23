@@ -1,17 +1,19 @@
 package ar.com.nicolasquartieri.list;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.annotation.DimenRes;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,30 +21,28 @@ import android.widget.LinearLayout;
 
 import ar.com.nicolasquartieri.R;
 import ar.com.nicolasquartieri.model.Contact;
-import ar.com.nicolasquartieri.remote.ApiErrorResponse;
+import ar.com.nicolasquartieri.remote.ResponseType;
 import ar.com.nicolasquartieri.ui.BaseFragment;
 import ar.com.nicolasquartieri.ui.utils.AnimationUtils;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 /**
  * Display the list of {@link Contact}.
  *
  * @author Nicolas Quartieri (nicolas.quartieri@gmail.com)
  */
-public class ContactListFragment extends BaseFragment
-        implements Callback<List<Contact>> {
+public class ContactListFragment extends BaseFragment {
     /** Recycler View */
     private RecyclerView mRecyclerView;
+    /** Swipe Refresh Layout */
+    private SwipeRefreshLayout mSwipeToRefresh;
     /** Recycler View Adapter */
     private ContactAdapter mAdapter;
     /** Nothing Layout */
     private LinearLayout mNothingLayout;
     /** Loading Fetch Bar  */
     private View mFetchBar;
-
-    private ContactsService service;
+    /** View Model */
+    private ContactListViewModel contactListViewModel;
 
     /**
      * New {@link ContactListFragment} instance.
@@ -54,13 +54,6 @@ public class ContactListFragment extends BaseFragment
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //Create Contacts Service.
-        service = retrofit.create(ContactsService.class);
-    }
-
-    @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
             final Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_photo_list, container, false);
@@ -69,7 +62,15 @@ public class ContactListFragment extends BaseFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initView(view);
+        initViewModel();
+    }
 
+    /**
+     * Initiate all related view components of this screen.
+     * @param view The actual {@link View} of this screen.
+     */
+    private void initView(View view) {
         mNothingLayout = (LinearLayout) view.findViewById(R.id.nothing_layout);
         mFetchBar = view.findViewById(R.id.fetch_bar);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.photo_list);
@@ -80,13 +81,44 @@ public class ContactListFragment extends BaseFragment
                 .addItemDecoration(new ItemOffsetDecoration(getActivity(), R.dimen.m0_125));
         // Avoid open multiple wallpaper screen at the same time. just take the first one.
         mRecyclerView.setMotionEventSplittingEnabled(false);
+
+        mSwipeToRefresh = (SwipeRefreshLayout) view.findViewById(R.id.swiperefresh);
+        mSwipeToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                contactListViewModel.onPullRefresh();
+            }
+        });
     }
 
-    @Override
-    protected void onStartLoading() {
-        super.onStartLoading();
-        // Sync cause data from remote service.
-        service.getContacts().enqueue(this);
+    /**
+     * Initiate all related view models of this screen.
+     */
+    private void initViewModel() {
+        // 1. Create ViewModel.
+        contactListViewModel = ViewModelProviders.of(this).get(ContactListViewModel.class);
+        // 2. Creates the observer.
+        Observer<ResponseType<List<Contact>>> contactObserver = new Observer<ResponseType<List<Contact>>>() {
+            @Override
+            public void onChanged(@Nullable ResponseType<List<Contact>> response) {
+                List<Contact> contacts = response.getPlayload();
+                if (contacts != null) {
+                    mNothingLayout.setVisibility(View.GONE);
+                    mRecyclerView.setVisibility(View.VISIBLE);
+                    if (mSwipeToRefresh.isRefreshing()) {
+                        mSwipeToRefresh.setRefreshing(false);
+                    }
+                } else {
+                    mNothingLayout.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.GONE);
+                }
+                mAdapter.setContacts(contacts);
+                onLoadingResponse(new Intent().putExtras(response.getArgs()));
+                finishLoading();
+            }
+        };
+        // 2. Subscribe the observer.
+        contactListViewModel.getCurrentContacts().observe(this, contactObserver);
     }
 
     @Override
@@ -102,43 +134,6 @@ public class ContactListFragment extends BaseFragment
             mAdapter = new ContactAdapter(this);
         }
         mRecyclerView.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void onResponse(Call<List<Contact>> call, Response<List<Contact>> response) {
-        List<Contact> contacts;
-        Bundle args = new Bundle();
-        if (response.isSuccessful()) {
-            contacts = response.body();
-            if (contacts != null && !contacts.isEmpty()) {
-                mAdapter.setContacts(contacts);
-                mNothingLayout.setVisibility(View.GONE);
-                mRecyclerView.setVisibility(View.VISIBLE);
-            }
-        } else {
-            mNothingLayout.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.GONE);
-            mAdapter.setContacts(null);
-
-            args.putParcelable(ApiErrorResponse.EXTRA_RESPONSE_ERROR,
-                    new ApiErrorResponse(ApiErrorResponse.ERROR_SERVICE,
-                    response.code()));
-        }
-
-        onLoadingResponse(new Intent().putExtras(args));
-        finishLoading();
-    }
-
-    @Override
-    public void onFailure(Call<List<Contact>> call, Throwable t) {
-        mAdapter.setContacts(new ArrayList<Contact>());
-
-        Bundle args = new Bundle();
-        args.putParcelable(ApiErrorResponse.EXTRA_RESPONSE_ERROR, new ApiErrorResponse(
-                ApiErrorResponse.ERROR_CONNECTION));
-        onLoadingResponse(new Intent().putExtras(args));
-        finishLoading();
-        Log.d("Contact-App", t.getMessage());
     }
 
     /**

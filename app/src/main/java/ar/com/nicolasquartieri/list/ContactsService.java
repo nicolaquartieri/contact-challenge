@@ -6,7 +6,7 @@ import ar.com.nicolasquartieri.model.Contact;
 import retrofit2.Call;
 import retrofit2.http.GET;
 
-interface ContactsService {
+public interface ContactsService {
     @GET("contacts")
     Call<List<Contact>> getContacts();
 }

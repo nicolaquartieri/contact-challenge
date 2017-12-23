@@ -5,7 +5,7 @@ import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 
-interface ContactsDetailService {
+public interface ContactsDetailService {
     @GET("contacts/{id}")
     Call<Contact> getContactDetail(@Path("id") String id);
 }
